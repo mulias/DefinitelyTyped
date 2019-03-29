@@ -568,6 +568,8 @@ declare namespace R {
         nodeType: number;
     }
 
+    type Tuple<T> = [T, ...T[]];
+
     type NonNil<T> = Exclude<T, null | undefined>;
 
     type Arity0Fn = () => any;
@@ -879,8 +881,12 @@ declare namespace R {
         /**
          * Returns a new list containing the contents of the given list, followed by the given element.
          */
+        append<T, U extends Tuple<any>>(el: T, list: U): Tools.Append<T, U>;
         append<T>(el: T, list: ReadonlyArray<T>): T[];
-        append<T>(el: T): <T>(list: ReadonlyArray<T>) => T[];
+        append<T>(el: T): {
+          <U extends Tuple<any>>(list: U): Tools.Append<T, U>;
+          (list: ReadonlyArray<T>): T[];
+        };
 
         /**
          * Applies function fn to the argument list args. This is useful for creating a fixed-arity function from
@@ -1477,6 +1483,7 @@ declare namespace R {
          * Returns the first element in a list.
          * In some libraries this function is named `first`.
          */
+        head<T>(list: [T, ...any[]]): T;
         head<T>(list: ReadonlyArray<T>): T | undefined;
         head(list: string): string;
 
@@ -1671,6 +1678,7 @@ declare namespace R {
         /**
          * Returns the last element from a list.
          */
+        last<T extends Tuple<any>>(arr: T): T[Tools.LastIndex<T>];
         last<T>(list: ReadonlyArray<T>): T | undefined;
         last(list: string): string;
 
@@ -2504,8 +2512,12 @@ declare namespace R {
          * Returns a new list with the given element at the front, followed by the contents of the
          * list.
          */
+        prepend<T, U extends Tuple<any>>(el: T, list: U): Tools.Prepend<T, U>;
         prepend<T>(el: T, list: ReadonlyArray<T>): T[];
-        prepend<T>(el: T): (list: ReadonlyArray<T>) => T[];
+        prepend<T>(el: T): {
+          <U extends Tuple<any>>(list: U): Tools.Prepend<T, U>;
+          (list: ReadonlyArray<T>): T[];
+        };
 
         /**
          * Multiplies together all the elements of a list.
