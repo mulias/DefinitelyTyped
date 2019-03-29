@@ -2978,7 +2978,8 @@ declare namespace R {
         /**
          * Returns a function of arity n from a (manually) curried function.
          */
-        uncurryN<T>(len: number, fn: (a: any) => any): (...a: any[]) => T;
+        uncurryN<N extends number, T extends (a: any) => any>(len: N, fn: T): Uncurry.UncurryN<N, T>;
+        uncurryN<N extends number>(len: N): <T extends (a: any) => any>(len: N, fn: T) => Uncurry.UncurryN<N, T>;
 
         /**
          * Builds a list from a seed value. Accepts an iterator function, which returns either false

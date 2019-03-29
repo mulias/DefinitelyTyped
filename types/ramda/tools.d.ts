@@ -112,3 +112,30 @@ declare namespace Curry {
             ? Curry<(...args: GapsOf<T, Parameters<F>> extends infer G ? Tools.Cast<G, any[]> : never) => ReturnType<F>>
             : ReturnType<F>;
 }
+
+declare namespace Uncurry {
+    type TailCurried<T extends (...a: any[]) => any> =
+        T extends (a: any, ...as: infer I) => (...bs: infer J) => infer K
+        ? Tools.Length<I> extends 0
+          ? (...bs: J) => K
+          : (...as: I) => ReturnType<T>
+        : T extends (a: any, ...as: infer I) => infer K
+          ? Tools.Length<I> extends 0
+            ? K
+            : (...as: I) => K
+          : T;
+
+    type Prepend<E, T extends any[]> =
+        ((arg: E, ...args: T) => any) extends ((...args: infer U) => any)
+        ? U
+        : T;
+
+    type UncurryN<
+        N extends number,
+        T extends (...a: any[]) => any,
+        U extends any[] = []
+    > = {
+        0: UncurryN<N, TailCurried<T>, Prepend<Tools.Head<Parameters<T>>, U>>;
+        1: (...a: Tools.Cast<Tools.Reverse<U>, any[]>) => T;
+    }[Tools.Length<U> extends N ? 1 : 0];
+}
