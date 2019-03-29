@@ -568,6 +568,8 @@ declare namespace R {
         nodeType: number;
     }
 
+    type NonNil<T> = Exclude<T, null | undefined>;
+
     type Arity0Fn = () => any;
 
     type Arity1Fn = (a: any) => any;
@@ -2529,30 +2531,33 @@ declare namespace R {
          * value according to strict equality (`===`).  Most likely used to
          * filter a list.
          */
-        propEq<T>(name: string | number, val: T, obj: any): boolean;
-        propEq<T>(name: string | number, val: T): (obj: any) => boolean;
-        propEq(name: string | number): {
-            <T>(val: T, obj: any): boolean;
-            <T>(val: T): (obj: any) => boolean;
-        };
+        propEq<T, K extends keyof T>(name: K, val: T[K], obj: T): boolean;
+        propEq<K extends Key, V>(name: K, val: V): <T extends {[k in K]?: V}>(obj: T) => boolean;
+        propEq<K extends Key>(name: K): {
+          <T extends {[k in K]?: any}>(val: T[K], obj: T): boolean;
+          <V>(val: V): <T extends {[k in K]?: V}>(obj: T) => boolean;
+         };
 
         /**
          * Returns true if the specified object property is of the given type; false otherwise.
          */
-        propIs(type: any, name: string, obj: any): boolean;
-        propIs(type: any, name: string): (obj: any) => boolean;
+        propIs<K extends string>(type: any, name: K, obj: Record<K, any>): boolean;
+        propIs<K extends string>(type: any, name: K): (obj: Record<K, any>) => boolean;
         propIs(type: any): {
-            (name: string, obj: any): boolean;
-            (name: string): (obj: any) => boolean;
+            <K extends string>(name: K, obj: Record<K, any>): boolean;
+            <K extends string>(name: K): (obj: Record<K, any>) => boolean;
         };
 
         /**
          * If the given, non-null object has an own property with the specified name, returns the value of that property.
          * Otherwise returns the provided default value.
          */
-        propOr<T, U, V>(val: T, p: string, obj: U): V;
-        propOr<T>(val: T, p: string): <U, V>(obj: U) => V;
-        propOr<T>(val: T): <U, V>(p: string, obj: U) => V;
+        propOr<T, U, P extends keyof U>(val: T, p: P, obj: U): T | NonNil<U[P]>;
+        propOr<T, P extends string>(val: T, p: P): <U>(obj: {[p in P]?: U}) => T | NonNil<U>;
+        propOr<T>(val: T): {
+          <U, P extends keyof U>(p: P, obj: U): T | NonNil<U[P]>;
+          <P extends string>(p: P): <U>(obj: {[p in P]?: U}) => T | NonNil<U>;
+        };
 
         /**
          * Returns the value at the specified property.
