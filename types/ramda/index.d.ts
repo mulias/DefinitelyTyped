@@ -1433,8 +1433,8 @@ declare namespace R {
          * calling a String-returning function
          * on each element, and grouping the results according to values returned.
          */
-        groupBy<T>(fn: (a: T) => string, list: ReadonlyArray<T>): { [index: string]: T[] };
-        groupBy<T>(fn: (a: T) => string): (list: ReadonlyArray<T>) => { [index: string]: T[] };
+        groupBy<T, K extends string>(fn: (a: T) => K, list: ReadonlyArray<T>): Record<K, T[]>;
+        groupBy<T, K extends string>(fn: (a: T) => K): (list: ReadonlyArray<T>) => Record<K, T[]>;
 
         /**
          * Takes a list and returns a list of lists where each sublist's elements are all "equal" according to the provided equality function
