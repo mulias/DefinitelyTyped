@@ -591,6 +591,8 @@ declare namespace R {
 
     type ObjPred = (value: any, key: string) => boolean;
 
+    type GuardPred<T, U extends T> = (a: T) => a is U;
+
     interface Dictionary<T> {
         [index: string]: T;
     }
@@ -3086,8 +3088,18 @@ declare namespace R {
          * will return the result of calling the whenTrueFn function with the same argument. If the predicate is not satisfied,
          * the argument is returned as is.
          */
-        when<T, U>(pred: (a: T) => boolean, whenTrueFn: (a: T) => U, obj: T): U;
-        when<T, U>(pred: (a: T) => boolean, whenTrueFn: (a: T) => U): (obj: T) => U;
+        when<T, U extends T, W>(pred: GuardPred<T, U>, whenTrueFn: (a: U) => W, obj: T): T | W;
+        when<T, U extends T, W>(pred: GuardPred<T, U>, whenTrueFn: (a: U) => W): (obj: T) => T | W;
+        when<T, U extends T>(pred: GuardPred<T, U>): {
+          <W>(whenTrueFn: (a: U) => W, obj: T): T | W;
+          <W>(whenTrueFn: (a: U) => W): (obj: T) => T | W;
+        };
+        when<T, U>(pred: (a: T) => boolean, whenTrueFn: (a: T) => U, obj: T): T | U;
+        when<T, U>(pred: (a: T) => boolean, whenTrueFn: (a: T) => U): (obj: T) => T | U;
+        when<T>(pred: (a: T) => boolean): {
+          <U>(whenTrueFn: (a: T) => U, obj: T): T | U;
+          <U>(whenTrueFn: (a: T) => U): (obj: T) => T | U;
+        };
 
         /**
          * Takes a spec object and a test object and returns true if the test satisfies the spec.
