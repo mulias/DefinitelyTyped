@@ -570,6 +570,8 @@ declare namespace R {
 
     type Tuple<T> = [T, ...T[]];
 
+    type TupleKeys<T extends Tuple<any>> = Exclude<keyof T, keyof Array<any>>
+
     type NonNil<T> = Exclude<T, null | undefined>;
 
     type Arity0Fn = () => any;
@@ -790,6 +792,8 @@ declare namespace R {
     type MergeDeep<Primary, Secondary> = { [K in CommonPropsThatAreObjects<Primary, Secondary>]: MergeDeep<Primary[K], Secondary[K]> } &
         { [K in Exclude<keyof Primary, CommonPropsThatAreObjects<Primary, Secondary>>]: Primary[K] } &
         { [K in Exclude<keyof Secondary, CommonKeys<Primary, Secondary>>]: Secondary[K] };
+
+    type PropsTuple<T, PS extends Tuple<any>> = { [I in TupleKeys<PS>]: PS[I] extends keyof T ? T[PS[I]] : never};
 
     interface Static {
         /**
@@ -2574,13 +2578,12 @@ declare namespace R {
         };
 
         /**
-         * Returns the value at the specified property.
-         * The only difference from `prop` is the parameter order.
-         * Note: TS1.9 # replace any by dictionary
+         * Acts as multiple prop: array of keys in, array of values out. Preserves order.
          */
-        props<P extends string, T>(ps: ReadonlyArray<P>, obj: Record<P, T>): T[];
-        props<P extends string>(ps: ReadonlyArray<P>): <T>(obj: Record<P, T>) => T[];
-        props<P extends string, T>(ps: ReadonlyArray<P>): (obj: Record<P, T>) => T[];
+        props<T, PS extends Tuple<keyof T>>(ps: PS, obj: T): PropsTuple<T, PS>;
+        props<K extends string, PS extends Tuple<K>>(ps: PS): <T extends Record<PS[number], any>>(obj: T) => PropsTuple<T, PS>;
+        props<T>(ps: ReadonlyArray<string>, obj: Record<any, T>): T[];
+        props(ps: ReadonlyArray<string>): <T>(obj: Record<any, T>) => T[];
 
         /**
          * Returns true if the specified object property satisfies the given predicate; false otherwise.
