@@ -2141,8 +2141,8 @@ declare namespace R {
          * Returns a partial copy of an object containing only the keys specified.  If the key does not exist, the
          * property is ignored.
          */
-        pick<T, K extends string>(names: ReadonlyArray<K>, obj: T): Pick<T, Exclude<keyof T, Exclude<keyof T, K>>>;
-        pick<K extends string>(names: ReadonlyArray<K>): <T>(obj: T) => Pick<T, Exclude<keyof T, Exclude<keyof T, K>>>;
+        pick<T, K extends keyof T>(names: ReadonlyArray<K>, obj: T): {[k in K]: T[k]};
+        pick<K extends string>(names: ReadonlyArray<K>): <T extends Record<K, any>>(obj: T) => {[k in K]: T[k]};
 
         /**
          * Similar to `pick` except that this one includes a `key: undefined` pair for properties that don't exist.
