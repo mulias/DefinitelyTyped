@@ -139,3 +139,10 @@ declare namespace Uncurry {
         1: (...a: Tools.Cast<Tools.Reverse<U>, any[]>) => T;
     }[Tools.Length<U> extends N ? 1 : 0];
 }
+
+declare namespace FromPairs {
+    type FromPairs<T extends Array<[string | number, any]>, U extends Record<string | number, any> = {}> = {
+        0: FromPairs<Tools.Tail<T>, { [P in Tools.Head<T>[0] | keyof U]: P extends Tools.Head<T>[0] ? Tools.Head<T>[1] : P extends keyof U ? U[P] : never };
+        1: U;
+    }[Length<T> extends 0 ? 1 : 0];
+}

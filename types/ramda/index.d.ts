@@ -1431,6 +1431,8 @@ declare namespace R {
         /**
          * Creates a new object out of a list key-value pairs.
          */
+        fromPairs<K extends string | number, V>(pairs: Array<[K, V]>): Record<K, V>;
+        fromPairs<K extends string | number, T extends Tuple<[K, any]>>(pairs: T): FromPairs.FromPairs<T>;
         fromPairs<V>(pairs: Array<KeyValuePair<string, V>>): { [index: string]: V };
         fromPairs<V>(pairs: Array<KeyValuePair<number, V>>): { [index: number]: V };
 
