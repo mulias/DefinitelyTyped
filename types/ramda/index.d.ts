@@ -2680,6 +2680,7 @@ declare namespace R {
         /**
          * Returns a new list with the same elements as the original list, just in the reverse order.
          */
+        reverse<T extends Tuple<any>>(list: T): Tools.Reverse<T>;
         reverse<T>(list: ReadonlyArray<T>): T[];
         /**
          * Returns a new string with the characters in reverse order.
