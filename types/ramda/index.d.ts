@@ -2003,8 +2003,12 @@ declare namespace R {
         /**
          * Returns the nth element in a list.
          */
+        nth<T extends Tuple<any>, N extends number>(n: N, list: T): T[N];
         nth<T>(n: number, list: ReadonlyArray<T>): T | undefined;
-        nth(n: number): <T>(list: ReadonlyArray<T>) => T | undefined;
+        nth<N extends number>(n: N): {
+          <T extends Tuple<any>>(list: T): T[N];
+          <T>(list: ReadonlyArray<T>): T | undefined;
+        }
 
         /**
          * Returns a function which returns its nth argument.
