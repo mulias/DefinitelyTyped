@@ -2024,7 +2024,7 @@ declare namespace R {
         /**
          * Returns a singleton array containing the value provided.
          */
-        of<T>(x: T): T[];
+        of<T>(x: T): [T];
 
         /**
          * Returns a partial copy of an object omitting the keys specified.
