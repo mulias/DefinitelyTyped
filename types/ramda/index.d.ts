@@ -3041,8 +3041,8 @@ declare namespace R {
          * the function will return the result of calling the whenFalseFn function with the same argument. If the
          * predicate is satisfied, the argument is returned as is.
          */
-        unless<T, U>(pred: (a: T) => boolean, whenFalseFn: (a: T) => U, obj: T): U;
-        unless<T, U>(pred: (a: T) => boolean, whenFalseFn: (a: T) => U): (obj: T) => U;
+        unless<T, U>(pred: (a: T) => boolean, whenFalseFn: (a: T) => U, obj: T): T | U;
+        unless<T, U>(pred: (a: T) => boolean, whenFalseFn: (a: T) => U): (obj: T) => T | U;
 
         /**
          * Returns a new list by pulling every item at the first level of nesting out, and putting
