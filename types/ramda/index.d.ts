@@ -2983,7 +2983,9 @@ declare namespace R {
          * Wraps a function of any arity (including nullary) in a function that accepts exactly 1 parameter.
          * Any extraneous parameters will not be passed to the supplied function.
          */
-        unary<T>(fn: (a: T, ...args: any[]) => any): (a: T) => any;
+        unary<T, U>(fn: (a: T) => U): (a: T) => U;
+        unary<T>(fn: () => T): (a: any) => T;
+        unary<A, B, U>(fn: (a: A, b?: B, ...args: any[]) => U): (a: A) => U;
 
         /**
          * Returns a function of arity n from a (manually) curried function.
