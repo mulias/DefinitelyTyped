@@ -986,8 +986,8 @@ declare namespace R {
         /**
          * Creates a deep copy of the value which may contain (nested) Arrays and Objects, Numbers, Strings, Booleans and Dates.
          */
-        clone<T>(value: T): T;
         clone<T>(value: ReadonlyArray<T>): T[];
+        clone<T>(value: T): T;
 
         /**
          * Makes a comparator function out of a function that reports whether the first element is less than the second.
@@ -1153,7 +1153,7 @@ declare namespace R {
          * matches, fn returns undefined.
          */
         cond(fns: ReadonlyArray<[Pred, (...a: any[]) => any]>): (...a: any[]) => any;
-        cond<A, B>(fns: ReadonlyArray<[SafePred<A>, (...a: A[]) => B]>): (...a: A[]) => B;
+        cond<A, B, U>(fns: ReadonlyArray<[SafePred<A>, (...a: A[]) => B] | [GuardPred<A, U>, (a: U) => B]>): (...a: A[]) => B | undefined;
 
         /**
          * Wraps a constructor function inside a curried function that can be called with the same arguments and returns the same type.
@@ -1247,9 +1247,8 @@ declare namespace R {
         /*
          * Returns a new object that does not contain a prop property.
          */
-        // It seems impossible to infer the return type, so this may to be specified explicitely
-        dissoc<T>(prop: string, obj: any): T;
-        dissoc(prop: string): <U>(obj: any) => U;
+        dissoc<T, P extends string>(prop: P, obj: T): Omit<T, P>;
+        dissoc<P extends string>(prop: P): <T>(obj: T) => Omit<T, P>;
 
         /**
          * Makes a shallow clone of an object, omitting the property at the given path.
@@ -1470,10 +1469,10 @@ declare namespace R {
         /**
          * Returns whether or not an object has an own property with the specified name.
          */
-        has<T>(__: Placeholder, obj: T): (s: string) => boolean;
-        has<T>(__: Placeholder): (obj: T, s: string) => boolean;
-        has<T>(s: string, obj: T): boolean;
-        has(s: string): <T>(obj: T) => boolean;
+        has<T>(__: Placeholder, obj: T): <P extends string>(s: P) => obj is T & Record<P, unknown>;
+        has(__: Placeholder): <T, P extends string>(obj: T, s: P) => obj is T & Recodr<P, unknown>;
+        has<T, P extends string>(s: P, obj: T): obj is T & Record<P, unknown>;
+        has<P extends string>(s: P): <T>(obj: T) => obj is T & Record<P, unknown>;
 
         /**
          * Returns whether or not an object or its prototype chain has a property with the specified name
@@ -1699,6 +1698,7 @@ declare namespace R {
         /**
          * Returns the number of elements in the array by returning list.length.
          */
+        length<T extends Tuple<any>>(list: T): T['length'];
         length<T>(list: ReadonlyArray<T>): number;
 
         /**
